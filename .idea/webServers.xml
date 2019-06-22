@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="60e32f2a-de63-4ba6-8efc-cee0a2ca2839" name="Deschutes Design Group LLC" url="https://dev.deschutesdesigngroup.com">
+        <fileTransfer host="192.185.129.4" port="22" rootFolder="/home/devdesch" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
