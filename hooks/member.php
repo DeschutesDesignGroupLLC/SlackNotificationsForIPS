@@ -15,18 +15,7 @@ class slack_hook_member extends _HOOK_CLASS_
      */
     public function slackConfiguration()
     {
-        // Try and fetch the configuration settings
-        try
-        {
-            // Fetch the settings
-            return \IPS\Db::i()->select( '*', 'slack_notification_settings', array( 'member_id=?', $this->member_id ) )->first();
-        }
-
-        // Could not find configuration settings
-        catch( \UnderflowException $e ){
-
-            // Return nothing
-            return NULL;
-        }
+        // Fetch the settings
+        return new \IPS\slack\Manager\Configuration( $this );
     }
 }

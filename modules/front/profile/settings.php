@@ -30,30 +30,38 @@ class _settings extends \IPS\Dispatcher\Controller
 	 *
 	 * @return	void
 	 */
-	protected function manage()
+	protected function slack()
 	{
 	    // Create our form
         $form = new \IPS\Helpers\Form;
 
-        // Get slack incoming webhook URL
+        // Load our logged in members slack configuration
         $configuration = \IPS\Member::loggedIn()->slackConfiguration();
 
+        // Webhooks
+        $form->addHeader( 'slack_webhook_url_header' );
+        $form->add( new \IPS\Helpers\Form\Stack( 'slack_webhook_url', $configuration->webhooks ? $configuration->webhooks : NULL, TRUE, array(
+            'stackFieldType' => 'IPS\slack\Form\Stack',
+            'webhook' => array( 'placeholder' => 'Webhook URL' ),
+            'channel' => array( 'placeholder' => 'Channel' )
+        ) ) );
+
         // Add form elements
-        $form->add( new \IPS\Helpers\Form\Url( 'slack_webhook_url', $configuration['webhook'] ? $configuration['webhook'] : NULL, FALSE ) );
-        $form->add( new \IPS\Helpers\Form\Color( 'slack_webhook_color', $configuration['color'] ? $configuration['color'] : NULL, FALSE ) );
+        $form->addHeader( 'settings' );
+        $form->add( new \IPS\Helpers\Form\Color( 'slack_webhook_color', $configuration->data['color'] ? $configuration->data['color'] : NULL, FALSE ) );
 
         // If the data has saved
         if( $values = $form->values() )
         {
             // Save the slack configuration
-            \IPS\slack\Notification\Slack::saveConfiguration( $values, \IPS\Member::loggedIn() );
+            $configuration->saveConfiguration( $values );
 
             // Redirect
             \IPS\Output::i()->redirect( \IPS\Http\Url::internal( 'app=core&module=system&controller=settings' ), 'saved' );
         }
 
         // Output the template
-        \IPS\Output::i()->title = \IPS\Member::loggedIn()->language()->addToStack( '__app_slack' );
+        \IPS\Output::i()->cssFiles = array_merge( \IPS\Output::i()->cssFiles, \IPS\Theme::i()->css( 'profile/settings.css', 'slack', 'front' ) );
         \IPS\Output::i()->output = \IPS\Theme::i()->getTemplate( 'profile', 'slack', 'front' )->settings( $form );
 	}
 }

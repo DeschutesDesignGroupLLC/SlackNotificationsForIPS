@@ -3,7 +3,7 @@
   "pages": {
     "profile": {
       "friendly": "settings/slack",
-      "real": "app=slack&module=profile&controller=settings"
+      "real": "app=slack&module=profile&controller=settings&do=slack"
     }
   }
 }

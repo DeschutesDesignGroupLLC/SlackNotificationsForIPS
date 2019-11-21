@@ -2,13 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="60e32f2a-de63-4ba6-8efc-cee0a2ca2839" name="Deschutes Design Group LLC" url="https://dev.deschutesdesigngroup.com">
-        <fileTransfer host="192.185.129.4" port="22" rootFolder="/home/devdesch" accessType="SFTP">
-          <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
-          </advancedOptions>
-          <option name="port" value="22" />
-        </fileTransfer>
+      <webServer id="6435730a-36a5-4d5e-ab48-809079a36079" name="Localhost" url="http://localhost:8888/ipbdevelopment/">
+        <fileTransfer port="0" mountedRoot="/Applications/MAMP/htdocs/ipbdevelopment" accessType="MOUNT" />
       </webServer>
     </option>
   </component>

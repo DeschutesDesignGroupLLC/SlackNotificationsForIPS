@@ -1,0 +1,43 @@
+.ipsField_stackItem {
+    padding-left: 0px;
+    min-width: 100%;
+}
+.ipsFieldRow:not( .ipsFieldRow_fullWidth ) .ipsField_stack {
+    max-width: 620px;
+}
+.ipsField_stackDrag {
+    display: none;
+}
+.ipsField_stackItem input[type="text"]:not(.ipsField_stackItemNoMargin),
+.ipsField_stackItem input[type="url"]:not(.ipsField_stackItemNoMargin) {
+    margin-left: 0px;
+    padding-left: 7px;
+}
+.ipsField_stackItem input[type="url"] {
+    width: 500px;
+}
+.ipsField_stackItem input[type="text"] {
+    width: 90px;
+}
+.ipsApp input[type="url"] {
+    max-width: 500px;
+}
+.ipsApp input[type="text"] {
+    max-width: 500px;
+}
+.slackInput {
+    display: inline-block;
+}
+
+@media screen and (max-width: 979px) {
+    .slackInput {
+        display: block;
+        margin-top: 5px;
+    }
+    .ipsField_stackItem input[type="url"] {
+        width: 420px;
+    }
+    .ipsField_stackItem input[type="text"] {
+        width: 420px;
+    }
+}

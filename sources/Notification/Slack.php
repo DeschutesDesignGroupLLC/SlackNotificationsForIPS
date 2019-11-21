@@ -51,25 +51,28 @@ class _Slack extends \IPS\Notification
     /**
      * @var The OG Notification
      */
-    protected $noticiation;
+    protected $notification;
 
     /**
-     * Constructor
+     * _Slack constructor.
      *
-     * @param	\IPS\Application	$app			The application the notification belongs to
-     * @param	string				$key			Notification key
-     * @param	object|NULL			$item			The thing the notification is about
-     * @param	array				$emailParams	Data for notification emails
-     * @param	array				$inlineExtra	Extra data to save with inline notifications. Use sparingly: only in cases where it is not possible to obtain the same data later. Will be merged for duplicate notifications.
-     * @param	bool				$allowMerging	Allow two identical notification types to be merged
-     * @param	string|NULL			$emailKey		Custom email template to use, or NULL to use default
-     * @return	void
+     * @param \IPS\Notification $notification
+     * @param null $title
+     * @param null $pretext
+     * @param null $text
+     * @param \IPS\Url|NULL $url
+     * @param array $fields
      */
     public function __construct( \IPS\Notification $notification, $title=NULL, $pretext=NULL, $text=NULL, \IPS\Url $url=NULL, $fields=array() )
     {
+        // Get application title
+        $app_title = $notification->app->_title;
+        \IPS\Member::loggedIn()->language()->parseOutputForDisplay( $app_title );
+
         // Set class properties
-        $this->title = $title;
-        $this->pretext = $pretext;
+        $this->title = $title == NULL ? $app_title : $title;
+        $this->item = $notification->item;
+        $this->pretext = $pretext == NULL ? \IPS\Member::loggedIn()->language()->get( 'slack_notifications_auto_pretext' ) : $pretext;
         $this->text = $text;
         $this->url = $url;
         $this->fields = $fields;
@@ -103,19 +106,20 @@ class _Slack extends \IPS\Notification
             if ( \count( $preference > 0 ) )
             {
                 // Loop through our recipients
-                foreach ( array_keys( $preference ) as $recipient )
+                foreach ( $preference as $member_id => $webhook )
                 {
-                    // Fetch the members webhook URL
-                    $configuration = \IPS\Member::load( $recipient )->slackConfiguration();
-
                     // Make sure we have a saved incoming webhook URL
-                    if ( $configuration['webhook'] AND $configuration['webhook'] != NULL )
+                    if ( $webhook )
                     {
+                        // Create the URL
+                        $member = \IPS\Member::load( $member_id );
+                        $hook = \IPS\Http\Url::external( $webhook );
+
                         // Try and post the notification
                         try
                         {
                             // Create the POST request
-                            return \IPS\Http\Url::external( $configuration['webhook'] )->request()->post( $this->composeNotificationPayload( $configuration ) );
+                            return $hook->request()->post( $this->composeNotificationPayload( $member->slackConfiguration(), $member ) );
                         }
 
                         // Catch any exceptions
@@ -148,23 +152,26 @@ class _Slack extends \IPS\Notification
      *
      * @param array $configuration
      */
-    protected function composeNotificationPayload( $configuration=array() )
+    public function composeNotificationPayload( \IPS\slack\Manager\Configuration $configuration, \IPS\Member $member )
     {
+        // Get our notification data
+        $data = $this->_getNotificationData( $member );
+
         // Create post data
         $json = json_encode(
             array(
-                'text' => $this->text,
+                'text' => $data['title'],
                 'attachments' =>
                 array(
                     array(
-                        'color' => $configuration['color'],
+                        'color' => $configuration->data['color'],
                         'pretext' => $this->pretext,
-                        'title' => $this->notification->app->_title,
-                        'title_link' => $this->notification->item ? $this->notification->item->url()->__toString() : NULL,
-                        'author_name' => $this->notification->item ? $this->notification->item->author()->name : NULL,
-                        'author_link' => $this->notification->item ? $this->notification->item->author()->url()->__toString() : NULL,
+                        'title' => $data['title'],
+                        'title_link' => method_exists( $data['url'], '__toString' ) ? $data['url']->__toString() : NULL,
+                        'author_name' => $data['author'],
+                        'author_link' => method_exists( $data['author'], 'url' ) ? $data['author']->url()->__toString() : NULL,
                         'fields' => \count( $this->fields ) > 0 ? $this->fields : NULL,
-                        'footer' => "Deschutes Design Group LLC",
+                        'footer' => \IPS\Settings::i()->board_name,
                         'footer_icon' => 'https://www.deschutesdesigngroup.com/images/deschutesdesigngroupllc-180.png',
                         'ts' => \IPS\DateTime::create()->getTimestamp()
                     )
@@ -180,24 +187,40 @@ class _Slack extends \IPS\Notification
     }
 
     /**
-     * Save Slack Configuration
+     * Get data from extension
      *
-     * @param null $webhook
-     * @param \IPS\Member $member
+     * @return	array
+     * @throws	\RuntimeException
      */
-    public static function saveConfiguration( $values=array(), \IPS\Member $member )
+    public function _getNotificationData( \IPS\Member $member)
     {
-        // If URL is not null and we have form values to save
-        if ( \count( $values ) > 0 AND $member->member_id != 0 )
-        {
-            // Remove all previous slack config settings
-            \IPS\Db::i()->delete( 'slack_notification_settings', array( 'member_id=?', $member->member_id ) );
+        // Make our make shift notification
+        $inline = new \IPS\Notification\Inline;
+        $inline->member = $member;
+        $inline->notification_app = $this->notification->app;
+        $inline->notification_key = $this->notification->key;
 
-            // Insert new slack settings
-            \IPS\Db::i()->insert( 'slack_notification_settings', array(
-                'member_id' => $member->member_id,
-                'webhook' => $values['slack_webhook_url'],
-                'color' => $values['slack_webhook_color'] ) );
+        // If we have a notification item
+        if ( $this->notification->item )
+        {
+            // Add the notification item
+            $inline->item = $this->notification->item;
         }
+
+        // Get our email params
+        foreach( $this->notification->emailParams AS $param )
+        {
+            // If they are a content item
+            if ( $param instanceof \IPS\Content )
+            {
+                // Get their sub class item
+                $subIdColumn = $param::$databaseColumnId;
+                $inline->item_sub_class = \get_class( $param );
+                $inline->item_sub_id = $param->$subIdColumn;
+            }
+        }
+
+        // Return our data
+        return $inline->getData();
     }
 }
