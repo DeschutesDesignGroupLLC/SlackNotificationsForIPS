@@ -105,6 +105,9 @@ class _Configuration
             $options[$webhook['webhook']] = $webhook['channel'];
         }
 
+        // Add our none setting
+        $options = array( 'disabled' => \IPS\Member::loggedIn()->language()->get( 'slack_webhook_none') ) + $options;
+
         // Return the select options
         return $options;
     }

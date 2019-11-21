@@ -38,6 +38,13 @@ class _settings extends \IPS\Dispatcher\Controller
         // Load our logged in members slack configuration
         $configuration = \IPS\Member::loggedIn()->slackConfiguration();
 
+        // Make sure to inform use to update notification settings
+        if ( \IPS\Request::i()->form_submitted )
+        {
+            // Add our message
+            $form->addMessage( 'slack_notifications_update', 'ipsMessage ipsMessage_info' );
+        }
+
         // Webhooks
         $form->addHeader( 'slack_webhook_url_header' );
         $form->add( new \IPS\Helpers\Form\Stack( 'slack_webhook_url', $configuration->webhooks ? $configuration->webhooks : NULL, TRUE, array(
@@ -57,7 +64,7 @@ class _settings extends \IPS\Dispatcher\Controller
             $configuration->saveConfiguration( $values );
 
             // Redirect
-            \IPS\Output::i()->redirect( \IPS\Http\Url::internal( 'app=core&module=system&controller=settings' ), 'saved' );
+            \IPS\Output::i()->redirect( \IPS\Http\Url::internal( 'app=core&module=system&controller=settings' ), 'slack_notifications_update' );
         }
 
         // Output the template

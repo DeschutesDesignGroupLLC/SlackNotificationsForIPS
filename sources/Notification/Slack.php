@@ -54,7 +54,7 @@ class _Slack extends \IPS\Notification
     protected $notification;
 
     /**
-     * _Slack constructor.
+     * Slack constructor.
      *
      * @param \IPS\Notification $notification
      * @param null $title
@@ -63,16 +63,11 @@ class _Slack extends \IPS\Notification
      * @param \IPS\Url|NULL $url
      * @param array $fields
      */
-    public function __construct( \IPS\Notification $notification, $title=NULL, $pretext=NULL, $text=NULL, \IPS\Url $url=NULL, $fields=array() )
+    public function __construct( \IPS\Notification $notification, $title=NULL, $pretext=NULL, $text=NULL, \IPS\Http\Url $url=NULL, $fields=array() )
     {
-        // Get application title
-        $app_title = $notification->app->_title;
-        \IPS\Member::loggedIn()->language()->parseOutputForDisplay( $app_title );
-
         // Set class properties
-        $this->title = $title == NULL ? $app_title : $title;
-        $this->item = $notification->item;
-        $this->pretext = $pretext == NULL ? \IPS\Member::loggedIn()->language()->get( 'slack_notifications_auto_pretext' ) : $pretext;
+        $this->title = $title;
+        $this->pretext = $pretext == NULL ? \IPS\Member::loggedIn()->language()->addToStack( 'slack_notifications_auto_pretext', FALSE, array( 'sprintf' => array( \IPS\Settings::i()->board_name ) ) ) : $pretext;
         $this->text = $text;
         $this->url = $url;
         $this->fields = $fields;
@@ -80,7 +75,11 @@ class _Slack extends \IPS\Notification
     }
 
     /**
-     * Send Slack Notification
+     * Send Slack Notifications
+     *
+     * Uses the notification recipient list to compose and send
+     * slack notifications using the recipients slack configuration
+     * from account settings.
      *
      * @return bool|\IPS\Http\Response
      */
@@ -109,7 +108,7 @@ class _Slack extends \IPS\Notification
                 foreach ( $preference as $member_id => $webhook )
                 {
                     // Make sure we have a saved incoming webhook URL
-                    if ( $webhook )
+                    if ( $webhook AND $webhook != 'disabled' )
                     {
                         // Create the URL
                         $member = \IPS\Member::load( $member_id );
@@ -148,31 +147,54 @@ class _Slack extends \IPS\Notification
      * Compose Notification Payload
      *
      * Creates our slack notification payload using the data
-     * parameters available within the class.
+     * parameters available within the class and the notification data.
      *
      * @param array $configuration
      */
-    public function composeNotificationPayload( \IPS\slack\Manager\Configuration $configuration, \IPS\Member $member )
+    protected function composeNotificationPayload( \IPS\slack\Manager\Configuration $configuration, \IPS\Member $member )
     {
         // Get our notification data
         $data = $this->_getNotificationData( $member );
 
+        // Get our favicon icon
+        $file = \IPS\File::get( 'core_Icons', \IPS\Settings::i()->icons_favicon );
+
+        // Get application title
+        $app_title = $this->notification->app->_title;
+        \IPS\Member::loggedIn()->language()->parseOutputForDisplay( $app_title );
+
+        // Create our fields
+        $fields = array(
+            array(
+                'title' => 'Application',
+                'value' => $app_title
+            )
+        );
+
+        // Add our fields to the array
+        if ( \count( $fields ) > 0 )
+        {
+            // Add them to the array
+            array_push( $fields[0], $this->fields );
+        }
+
         // Create post data
         $json = json_encode(
             array(
-                'text' => $data['title'],
                 'attachments' =>
                 array(
                     array(
                         'color' => $configuration->data['color'],
-                        'pretext' => $this->pretext,
-                        'title' => $data['title'],
-                        'title_link' => method_exists( $data['url'], '__toString' ) ? $data['url']->__toString() : NULL,
-                        'author_name' => $data['author'],
-                        'author_link' => method_exists( $data['author'], 'url' ) ? $data['author']->url()->__toString() : NULL,
-                        'fields' => \count( $this->fields ) > 0 ? $this->fields : NULL,
+                        'pretext' => $this->pretext ? $this->pretext : NULL,
+                        'author_name' => $data['author'] ? $data['author']->name : NULL,
+                        'author_link' => $data['author'] ? ( method_exists( $data['author'], 'url' ) ? $data['author']->url()->__toString() : NULL ) : NULL,
+                        'author_icon' => $data['author'] ? ( method_exists( $data['author'], 'get_photo' ) ? $data['author']->get_photo( TRUE, TRUE ) : NULL ) : NULL,
+                        'title' => $data['title'] ? $data['title'] : ( $this->title ? $this->title : NULL ),
+                        'title_link' => $data['url'] ? ( method_exists( $data['url'], '__toString' ) ? $data['url']->__toString() : NULL ) : NULL,
+                        'text' => $this->text ? $this->text : NULL,
+                        'fields' => $fields,
                         'footer' => \IPS\Settings::i()->board_name,
-                        'footer_icon' => 'https://www.deschutesdesigngroup.com/images/deschutesdesigngroupllc-180.png',
+                        'footer_icon' => \IPS\Settings::i()->icons_favicon ? $file->fullyQualifiedUrl( $file->url )->__toString() : NULL,
                         'ts' => \IPS\DateTime::create()->getTimestamp()
                     )
                 )
@@ -187,12 +209,16 @@ class _Slack extends \IPS\Notification
     }
 
     /**
-     * Get data from extension
+     * Get Notification Data
+     *
+     * Build a inline notification helper class that we can use
+     * to help get the notification data, specifically the notification's
+     * item.
      *
      * @return	array
      * @throws	\RuntimeException
      */
-    public function _getNotificationData( \IPS\Member $member)
+    protected function _getNotificationData( \IPS\Member $member)
     {
         // Make our make shift notification
         $inline = new \IPS\Notification\Inline;

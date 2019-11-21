@@ -80,6 +80,9 @@ class slack_hook_notifications extends _HOOK_CLASS_
 
 	/**
 	 * Send Notification
+     *
+     * Override and send slack notifications before finishing and
+     * sending internal notifications.
 	 *
 	 * @param	array	$sentTo		Members who have already received a notification and how (same format as the return value) to prevent duplicates
 	 * @return	array	The members that were notified and how they were notified
