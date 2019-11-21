@@ -1,1 +1,111 @@
-[]
+{
+    "slack_notification_preferences": {
+        "name": "slack_notification_preferences",
+        "columns": {
+            "member_id": {
+                "allow_null": false,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "Member ID Number",
+                "decimals": null,
+                "default": "0",
+                "length": 20,
+                "name": "member_id",
+                "type": "BIGINT",
+                "unsigned": true,
+                "values": [],
+                "zerofill": false
+            },
+            "notification_key": {
+                "allow_null": false,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "Notification Key",
+                "decimals": null,
+                "default": "",
+                "length": 100,
+                "name": "notification_key",
+                "type": "VARCHAR",
+                "unsigned": false,
+                "values": [],
+                "zerofill": false
+            },
+            "preference": {
+                "allow_null": true,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "Enabled Notification Methods",
+                "decimals": null,
+                "default": null,
+                "length": 0,
+                "name": "preference",
+                "type": "TEXT",
+                "unsigned": false,
+                "values": [],
+                "zerofill": false
+            }
+        },
+        "indexes": [],
+        "collation": "utf8mb4_unicode_ci"
+    },
+    "slack_notification_settings": {
+        "name": "slack_notification_settings",
+        "columns": {
+            "member_id": {
+                "allow_null": false,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "Member ID Number",
+                "decimals": null,
+                "default": "0",
+                "length": 20,
+                "name": "member_id",
+                "type": "BIGINT",
+                "unsigned": true,
+                "values": [],
+                "zerofill": false
+            },
+            "webhook": {
+                "allow_null": true,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "Incoming Slack Webook URL",
+                "decimals": null,
+                "default": null,
+                "length": 0,
+                "name": "webhook",
+                "type": "TEXT",
+                "unsigned": false,
+                "values": [],
+                "zerofill": false
+            },
+            "color": {
+                "allow_null": true,
+                "auto_increment": false,
+                "binary": false,
+                "comment": "HEX Color Digit",
+                "decimals": null,
+                "default": null,
+                "length": 10,
+                "name": "color",
+                "type": "VARCHAR",
+                "unsigned": false,
+                "values": [],
+                "zerofill": false
+            }
+        },
+        "indexes": {
+            "PRIMARY": {
+                "type": "primary",
+                "name": "PRIMARY",
+                "length": [
+                    null
+                ],
+                "columns": [
+                    "member_id"
+                ]
+            }
+        },
+        "collation": "utf8mb4_unicode_ci"
+    }
+}

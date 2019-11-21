@@ -1,0 +1,68 @@
+{
+    "1": {
+        "method": "createTable",
+        "params": [
+            {
+                "name": "slack_notification_preferences",
+                "columns": {
+                    "member_id": {
+                        "name": "member_id",
+                        "type": "BIGINT",
+                        "length": 20,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": false,
+                        "default": "0",
+                        "comment": "Member ID Number",
+                        "unsigned": true,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    },
+                    "notification_key": {
+                        "name": "notification_key",
+                        "type": "VARCHAR",
+                        "length": 100,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": false,
+                        "default": "",
+                        "comment": "Notification Key",
+                        "unsigned": false,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    },
+                    "preference": {
+                        "name": "preference",
+                        "type": "SET",
+                        "length": null,
+                        "decimals": null,
+                        "values": [
+                            "slack"
+                        ],
+                        "allow_null": true,
+                        "default": null,
+                        "comment": "Enabled Notification Methods",
+                        "unsigned": false,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    }
+                },
+                "indexes": {
+                    "PRIMARY": {
+                        "type": "primary",
+                        "name": "PRIMARY",
+                        "columns": [
+                            "id"
+                        ],
+                        "length": [
+                            null
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

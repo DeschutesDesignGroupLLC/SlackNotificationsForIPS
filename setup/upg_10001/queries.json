@@ -1,0 +1,89 @@
+{
+    "1": {
+        "method": "createTable",
+        "params": [
+            {
+                "name": "slack_notification_settings",
+                "columns": {
+                    "member_id": {
+                        "name": "member_id",
+                        "type": "BIGINT",
+                        "length": 20,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": false,
+                        "default": "0",
+                        "comment": "Member ID Number",
+                        "unsigned": true,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    },
+                    "color": {
+                        "name": "color",
+                        "type": "VARCHAR",
+                        "length": 10,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": true,
+                        "default": null,
+                        "comment": "HEX Color Digit",
+                        "unsigned": false,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    },
+                    "webhook": {
+                        "name": "webhook",
+                        "type": "TEXT",
+                        "length": 100,
+                        "decimals": null,
+                        "values": null,
+                        "allow_null": true,
+                        "default": null,
+                        "comment": "Incoming Slack Webook URL",
+                        "unsigned": false,
+                        "zerofill": false,
+                        "auto_increment": false,
+                        "binary": false
+                    }
+                },
+                "indexes": {
+                    "PRIMARY": {
+                        "type": "primary",
+                        "name": "PRIMARY",
+                        "columns": [
+                            "member_id"
+                        ],
+                        "length": [
+                            null
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "2": {
+        "method": "changeColumn",
+        "params": [
+            "slack_notification_preferences",
+            "preference",
+            {
+                "name": "preference",
+                "type": "TEXT",
+                "length": null,
+                "decimals": null,
+                "values": [
+                    "slack"
+                ],
+                "allow_null": true,
+                "default": null,
+                "comment": "Enabled Notification Methods",
+                "unsigned": false,
+                "zerofill": false,
+                "auto_increment": false,
+                "binary": false
+            }
+        ]
+    }
+}

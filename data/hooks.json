@@ -1,1 +1,14 @@
-[]
+{
+    "member": {
+        "type": "C",
+        "class": "\\IPS\\Member"
+    },
+    "notifications": {
+        "type": "C",
+        "class": "\\IPS\\Notification"
+    },
+    "settings": {
+        "type": "S",
+        "class": "\\IPS\\Theme\\class_core_front_system"
+    }
+}

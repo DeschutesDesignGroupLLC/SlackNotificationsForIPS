@@ -1,1 +1,8 @@
-[]
+{
+    "front": {
+        "slack": {
+            "default_controller": "",
+            "protected": false
+        }
+    }
+}

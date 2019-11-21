@@ -1,9 +1,9 @@
 {
   "topLevel": "",
   "pages": {
-    "profile": {
+    "slack": {
       "friendly": "settings/slack",
-      "real": "app=slack&module=profile&controller=settings&do=slack"
+      "real": "app=slack&module=slack&controller=settings"
     }
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace IPS\slack\modules\front\profile;
+namespace IPS\slack\modules\front\slack;
 
 /* To prevent PHP errors (extending class does not exist) revealing path */
 if ( !\defined( '\IPS\SUITE_UNIQUE_KEY' ) )
@@ -30,7 +30,7 @@ class _settings extends \IPS\Dispatcher\Controller
 	 *
 	 * @return	void
 	 */
-	protected function slack()
+	protected function manage()
 	{
 	    // Create our form
         $form = new \IPS\Helpers\Form;

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language>
+ <app key="slack" version="10005">
+  <word key="__app_slack" js="0">Slack Notifications</word>
+  <word key="module__slack_profile" js="0">Slack Notification Settings</word>
+  <word key="member_notifications_slack" js="0">Slack</word>
+  <word key="slack_notifications_auto_pretext" js="0"> You have received a new Invision Power Board notification.</word>
+  <word key="slack_webhook_url_header" js="0">Webhooks</word>
+  <word key="slack_webhook_url" js="0">Incoming Webhook URLs</word>
+  <word key="slack_webhook_url_desc" js="0"><![CDATA[Please enter your slack incoming webhook URLs that can be created and found <a target="_blank" href="https://api.slack.com/incoming-webhooks">here</a>. You can add as many as you want and specify which notification type is sent to which Slack channel. The channel name is only for your identification and does not play a role in the actual notificationn.]]></word>
+  <word key="slack_webhook_color" js="0">Notification Color</word>
+  <word key="slack_webhook_color_desc" js="0">The colored bar that appears next to your slack notifications.</word>
+ </app>
+</language>

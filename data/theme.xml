@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme name="Default" author_name="Invision Power Services, Inc" author_url="https://www.invisioncommunity.com">
+ <template template_group="forms" template_name="webhook" template_data="$webhook, $channel" template_location="global" template_app="slack"><![CDATA[<div class="slackInput">
+    <span data-ipsStack-keyvalue-name="webhook">{$webhook|raw}</span>
+</div>
+<div class="slackInput">
+    <span data-ipsStack-keyvalue-name="channel">{$channel|raw}</span>
+</div>
+]]></template>
+ <template template_group="profile" template_name="settings" template_data="$form" template_location="front" template_app="slack"><![CDATA[<h2 class="ipsType_sectionHead">{lang="__app_slack"}</h2>
+<hr class="ipsHr">
+{$form|raw}]]></template>
+ <css css_location="front" css_app="slack" css_attributes="" css_path="profile" css_name="settings.css">.ipsField_stackItem {
+    padding-left: 0px;
+    min-width: 100%;
+}
+.ipsFieldRow:not( .ipsFieldRow_fullWidth ) .ipsField_stack {
+    max-width: 620px;
+}
+.ipsField_stackDrag {
+    display: none;
+}
+.ipsField_stackItem input[type=&quot;text&quot;]:not(.ipsField_stackItemNoMargin),
+.ipsField_stackItem input[type=&quot;url&quot;]:not(.ipsField_stackItemNoMargin) {
+    margin-left: 0px;
+    padding-left: 7px;
+}
+.ipsField_stackItem input[type=&quot;url&quot;] {
+    width: 500px;
+}
+.ipsField_stackItem input[type=&quot;text&quot;] {
+    width: 90px;
+}
+.ipsApp input[type=&quot;url&quot;] {
+    max-width: 500px;
+}
+.ipsApp input[type=&quot;text&quot;] {
+    max-width: 500px;
+}
+.slackInput {
+    display: inline-block;
+}
+
+@media screen and (max-width: 979px) {
+    .slackInput {
+        display: block;
+        margin-top: 5px;
+    }
+    .ipsField_stackItem input[type=&quot;url&quot;] {
+        width: 420px;
+    }
+    .ipsField_stackItem input[type=&quot;text&quot;] {
+        width: 420px;
+    }
+}</css>
+</theme>
