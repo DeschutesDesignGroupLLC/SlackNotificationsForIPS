@@ -54,14 +54,14 @@ class _Slack extends \IPS\Notification
     protected $notification;
 
     /**
-     * Slack constructor.
+     * Slack Constructor
      *
-     * @param \IPS\Notification $notification
-     * @param null $title
-     * @param null $pretext
-     * @param null $text
-     * @param \IPS\Url|NULL $url
-     * @param array $fields
+     * @param \IPS\Notification $notification       The notification used to construct the slack notification
+     * @param null $title                           The notification title. If not used, the notification text will be used.
+     * @param null $pretext                         Optional pretext. Will default to basic notification string.
+     * @param null $text                            Optional text. Not used if nothing is passed.
+     * @param \IPS\Url|NULL $url                    Optional URL for the title. If not used, the notification link will be used.
+     * @param array $fields                         Optional fields. Example: array( 'title' => 'Field 1', 'value' => 'Test Value' );
      */
     public function __construct( \IPS\Notification $notification, $title=NULL, $pretext=NULL, $text=NULL, \IPS\Http\Url $url=NULL, $fields=array() )
     {
@@ -72,6 +72,12 @@ class _Slack extends \IPS\Notification
         $this->url = $url;
         $this->fields = $fields;
         $this->notification = $notification;
+
+        // Example of a \IPS\Content item
+        $notification = new \IPS\Notification( \IPS\Application::load('core'), 'notification_key', $this->item(), array( $this ) );
+        $notification->recpients->attach( \IPS\Member::loggedIn() );
+        $slack = new \IPS\slack\Notification\Slack( $notification );
+        $slack->sendSlackNotifications();
     }
 
     /**
@@ -161,7 +167,7 @@ class _Slack extends \IPS\Notification
 
         // Get application title
         $app_title = $this->notification->app->_title;
-        \IPS\Member::loggedIn()->language()->parseOutputForDisplay( $app_title );
+        $member->language()->parseOutputForDisplay( $app_title );
 
         // Create our fields
         $fields = array(
@@ -202,7 +208,7 @@ class _Slack extends \IPS\Notification
         );
 
         // Parse output for display
-        \IPS\Member::loggedIn()->language()->parseOutputForDisplay( $json );
+        $member->language()->parseOutputForDisplay( $json );
 
         // Return the json
         return $json;
