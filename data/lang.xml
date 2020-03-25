@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <language>
- <app key="slack" version="10008">
+ <app key="slack" version="10009">
   <word key="__app_slack" js="0">Slack Notifications</word>
   <word key="module__slack_profile" js="0">Slack Notification Settings</word>
   <word key="member_notifications_slack" js="0">Slack</word>
